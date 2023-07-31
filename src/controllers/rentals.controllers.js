@@ -10,14 +10,14 @@ export async function getRentals(req,res) {
                     SELECT rentals.*, customers.name as customer, 
                     games.name as game FROM rentals JOIN customers ON 
                     rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id 
-                    ORDER BY ${order} DESC;
+                    ORDER BY "${order}" DESC;
                 `);
             } else{
                 rentals = await db.query(`
                     SELECT rentals.*, customers.name as customer, 
                     games.name as game FROM rentals JOIN customers ON 
                     rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id 
-                    ORDER BY ${order} ASC;
+                    ORDER BY "${order}" ASC;
                 `);
             }
         } else {

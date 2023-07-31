@@ -5,10 +5,10 @@ export async function getGames(req, res) {
     try {
         if (order) {
             if (desc){
-                const games = await db.query(`SELECT * FROM games ORDER BY ${order} DESC;`);
+                const games = await db.query(`SELECT * FROM games ORDER BY "${order}" DESC;`);
                 return res.send(games.rows);
             } else{
-                const games = await db.query(`SELECT * FROM games ORDER BY ${order} ASC;`);
+                const games = await db.query(`SELECT * FROM games ORDER BY "${order}" ASC;`);
                 return res.send(games.rows);
             }
         }
