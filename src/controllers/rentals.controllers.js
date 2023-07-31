@@ -45,11 +45,12 @@ export async function returnRental(req, res) {
     const { id } = req.params;
     const { rental } = res.locals;
     try {
-        const returnDate = new Date();
+        const returnDate = new Date('2023-08-20');
         let late =  Math.floor(Math.abs(returnDate - rental.rentDate)/(24 * 60 * 60 * 1000));
         let delayFee = 0;
         if (late - rental.daysRented > 0){
-            delayFee = (late - rental.daysRented)*rental.originalPrice;
+            let game = await db.query(`SELECT * FROM games WHERE id=$1`, [rental.gameId]);
+            delayFee = (late - rental.daysRented)*game.rows[0].pricePerDay;
         }
         await db.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3`, [returnDate,delayFee,id]);
         res.sendStatus(200);

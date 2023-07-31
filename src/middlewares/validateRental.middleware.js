@@ -46,7 +46,6 @@ export async function validateDisponibility(req, res, next) {
 
 export async function validateRental(req, res, next){
     const { id } = req.params;
-    console.log(req.path.split('/'));
     try {
         const rental = await db.query(`SELECT * FROM rentals WHERE id=$1`, [id]);
         if (!rental.rows[0]) return res.sendStatus(404);
