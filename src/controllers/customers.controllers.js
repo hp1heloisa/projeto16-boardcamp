@@ -3,6 +3,10 @@ import { db } from "../database/database.connection.js";
 export async function getCustomers(req, res) {
     try {
         const customers = await db.query('SELECT * FROM customers');
+        customers.rows.forEach(customer => {
+            const birthday = new Date(customer.birthday);
+            customer.birthday = `${birthday.getFullYear()}-${String(birthday.getMonth() + 1).padStart(2, '0')}-${String(birthday.getDate()).padStart(2, '0')}`
+        })
         res.send(customers.rows);
     } catch (error) {
         res.status(500).send(error.message);
@@ -14,6 +18,8 @@ export async function getCustomersById(req, res) {
     try {
         const customers = await db.query('SELECT * FROM customers WHERE id=$1', [id]);
         if (!customers.rows[0]) return res.sendStatus(404);
+        const birthday = new Date(customers.rows[0].birthday);
+        customers.rows[0].birthday = `${birthday.getFullYear()}-${String(birthday.getMonth() + 1).padStart(2, '0')}-${String(birthday.getDate()).padStart(2, '0')}`
         res.send(customers.rows[0]);
     } catch (error) {
         res.status(500).send(error.message);

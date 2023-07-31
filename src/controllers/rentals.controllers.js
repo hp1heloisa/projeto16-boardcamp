@@ -8,6 +8,8 @@ export async function getRentals(req,res) {
             rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id;
         `);
         rentals.rows.forEach(rental => {
+            const rentDate = new Date(rental.rentDate);
+            rental.rentDate = `${rentDate.getFullYear()}-${String(rentDate.getMonth() + 1).padStart(2, '0')}-${String(rentDate.getDate()).padStart(2, '0')}`
             rental.customer = [rental.customerId, rental.customer];
             rental.game = [rental.gameId, rental.game];
         })
