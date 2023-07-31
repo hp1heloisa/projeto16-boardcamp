@@ -43,3 +43,19 @@ export async function validateDisponibility(req, res, next) {
     }
     next();
 }
+
+export async function validateRental(req, res, next){
+    const { id } = req.params;
+    console.log(req.path.split('/'));
+    try {
+        const rental = await db.query(`SELECT * FROM rentals WHERE id=$1`, [id]);
+        if (!rental.rows[0]) return res.sendStatus(404);
+        if (rental.rows[0].returnDate && req.path.split('/').includes('return')) return res.sendStatus(400);    
+        if (!rental.rows[0].returnDate && !req.path.split('/').includes('return')) return res.sendStatus(400);
+
+        res.locals.rental = rental.rows[0];
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+    next();
+}
