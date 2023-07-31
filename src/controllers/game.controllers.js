@@ -1,18 +1,20 @@
 import { db } from "../database/database.connection.js";
 
 export async function getGames(req, res) {
-    const { order, desc } = req.query; 
+    const { order, desc, name } = req.query; 
     try {
+        let requisicao = 'SELECT * FROM games';
+        if (name) {
+            requisicao += ` WHERE LOWER(name) LIKE LOWER('${name}%')`;
+        }
         if (order) {
             if (desc){
-                const games = await db.query(`SELECT * FROM games ORDER BY "${order}" DESC;`);
-                return res.send(games.rows);
+                requisicao += ` ORDER BY "${order}" DESC;`;
             } else{
-                const games = await db.query(`SELECT * FROM games ORDER BY "${order}" ASC;`);
-                return res.send(games.rows);
+                requisicao += ` ORDER BY "${order}" ASC;`
             }
         }
-        const games = await db.query('SELECT * FROM games');
+        const games = await db.query(requisicao);
         res.send(games.rows);
     } catch (error) {
         res.status(500).send(error.message);

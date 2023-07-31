@@ -1,31 +1,36 @@
 import { db } from "../database/database.connection.js";
 
 export async function getRentals(req,res) {
-    const { order, desc } = req.query; 
+    const { order, desc, customerId, gameId } = req.query; 
     try {
-        let rentals;
+        let requisicao = `
+            SELECT rentals.*, customers.name as customer, 
+            games.name as game FROM rentals JOIN customers ON 
+            rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id
+        `
+        if (customerId && gameId){
+            requisicao += ` WHERE "customerId"=$1 AND "gameId"=$2`;
+        } else if (customerId) {
+            requisicao += ` WHERE "customerId"=$1`;
+        }else if (gameId) {
+            requisicao += ` WHERE "gameId"=$1`;
+        }
         if (order) {
             if (desc){
-                rentals = await db.query(`
-                    SELECT rentals.*, customers.name as customer, 
-                    games.name as game FROM rentals JOIN customers ON 
-                    rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id 
-                    ORDER BY "${order}" DESC;
-                `);
+                requisicao += ` ORDER BY "${order}" DESC;`
             } else{
-                rentals = await db.query(`
-                    SELECT rentals.*, customers.name as customer, 
-                    games.name as game FROM rentals JOIN customers ON 
-                    rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id 
-                    ORDER BY "${order}" ASC;
-                `);
+                requisicao += ` ORDER BY "${order}" ASC;`
             }
+        }
+        let rentals;
+        if (customerId && gameId){
+            rentals = await db.query(requisicao, [customerId, gameId]);
+        } else if (customerId){
+            rentals = await db.query(requisicao, [customerId]);
+        } else if (gameId){
+            rentals = await db.query(requisicao, [gameId]);
         } else {
-            rentals = await db.query(`
-                SELECT rentals.*, customers.name as customer, 
-                games.name as game FROM rentals JOIN customers ON 
-                rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id;
-            `);
+            rentals = await db.query(requisicao);
         }
         
         rentals.rows.forEach(rental => {
