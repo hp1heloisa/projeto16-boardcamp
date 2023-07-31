@@ -20,6 +20,11 @@ export async function getRentals(req,res) {
             } else if (status == 'closed') {
                 requisicao += `WHERE "returnDate" IS NOT NULL`;
             }
+            if (startDate){
+                let data = new Date(startDate);
+                requisicao += ` AND "rentDate"='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()+1).padStart(2, '0')}'`;
+            
+            }
         } 
         if (startDate){
             let data = new Date(startDate);
