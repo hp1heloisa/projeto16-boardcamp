@@ -10,8 +10,8 @@ export async function getRentals(req,res) {
         rentals.rows.forEach(rental => {
             const rentDate = new Date(rental.rentDate);
             rental.rentDate = `${rentDate.getFullYear()}-${String(rentDate.getMonth() + 1).padStart(2, '0')}-${String(rentDate.getDate()).padStart(2, '0')}`
-            rental.customer = [rental.customerId, rental.customer];
-            rental.game = [rental.gameId, rental.game];
+            rental.customer = {id: rental.customerId, name: rental.customer};
+            rental.game = {id: rental.gameId, name: rental.game};
             if (rental.returnDate) {
                 const returnDate = new Date(rental.returnDate);
                 rental.returnDate = `${returnDate.getFullYear()}-${String(returnDate.getMonth() + 1).padStart(2, '0')}-${String(returnDate.getDate()).padStart(2, '0')}`
