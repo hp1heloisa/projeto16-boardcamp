@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
 export async function getCustomers(req, res) {
-    const { order, desc, cpf } = req.query; 
+    const { order, desc, cpf, offset, limit } = req.query; 
     try {
         let requisicao = 'SELECT * FROM customers';
         if (cpf) {
@@ -9,11 +9,17 @@ export async function getCustomers(req, res) {
         }
         if (order) {
             if (desc){
-                requisicao += ` ORDER BY ${order} DESC;`;
+                requisicao += ` ORDER BY ${order} DESC`;
             } else{
-                requisicao += ` ORDER BY ${order} ASC;`
+                requisicao += ` ORDER BY ${order} ASC`
             }
         } 
+        if (offset) {
+            requisicao += ` OFFSET ${offset}`;
+        }
+        if (limit) {
+            requisicao += ` LIMIT ${limit}`;
+        }
         const customers = await db.query(requisicao);
         customers.rows.forEach(customer => {
             const birthday = new Date(customer.birthday);

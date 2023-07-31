@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
 export async function getGames(req, res) {
-    const { order, desc, name } = req.query; 
+    const { order, desc, name, offset, limit } = req.query; 
     try {
         let requisicao = 'SELECT * FROM games';
         if (name) {
@@ -9,10 +9,16 @@ export async function getGames(req, res) {
         }
         if (order) {
             if (desc){
-                requisicao += ` ORDER BY "${order}" DESC;`;
+                requisicao += ` ORDER BY "${order}" DESC`;
             } else{
-                requisicao += ` ORDER BY "${order}" ASC;`
+                requisicao += ` ORDER BY "${order}" ASC`;
             }
+        }
+        if (offset) {
+            requisicao += ` OFFSET ${offset}`;
+        }
+        if (limit) {
+            requisicao += ` LIMIT ${limit}`;
         }
         const games = await db.query(requisicao);
         res.send(games.rows);
