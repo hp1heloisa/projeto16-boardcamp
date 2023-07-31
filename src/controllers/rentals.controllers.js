@@ -26,7 +26,7 @@ export async function getRentals(req,res) {
             
             }
         } 
-        if (startDate){
+        if (startDate && !status){
             let data = new Date(startDate);
             requisicao += `WHERE "rentDate"='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()+1).padStart(2, '0')}'`;
         }
