@@ -1,8 +1,10 @@
 {
   "name": "projeto16-boardcamp",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "src/app.js",
+
   "scripts": {
     "start": "node ./src/app.js",
     "dev": "npx nodemon ./src/app.js"
