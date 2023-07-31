@@ -1,6 +1,8 @@
 import { db } from "../database/database.connection.js";
 
 export async function getGames(req, res) {
+    const { order, desc } = req.query; 
+    console.log(req.query);
     try {
         const games = await db.query('SELECT * FROM games');
         res.send(games.rows);

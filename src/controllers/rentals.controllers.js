@@ -45,7 +45,7 @@ export async function returnRental(req, res) {
     const { id } = req.params;
     const { rental } = res.locals;
     try {
-        const returnDate = new Date('2023-08-20');
+        const returnDate = new Date();
         let late =  Math.floor(Math.abs(returnDate - rental.rentDate)/(24 * 60 * 60 * 1000));
         let delayFee = 0;
         if (late - rental.daysRented > 0){
