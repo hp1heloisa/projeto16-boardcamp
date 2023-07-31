@@ -22,13 +22,13 @@ export async function getRentals(req,res) {
             }
             if (startDate){
                 let data = new Date(startDate);
-                requisicao += ` AND "rentDate"='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()+1).padStart(2, '0')}'`;
+                requisicao += ` AND "rentDate">='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()+1).padStart(2, '0')}'`;
             
             }
         } 
         if (startDate && !status){
             let data = new Date(startDate);
-            requisicao += `WHERE "rentDate"='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()+1).padStart(2, '0')}'`;
+            requisicao += `WHERE "rentDate">='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()+1).padStart(2, '0')}'`;
         }
         if (order) {
             if (desc){
