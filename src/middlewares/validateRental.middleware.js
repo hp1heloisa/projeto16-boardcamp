@@ -29,11 +29,14 @@ export async function validateDisponibility(req, res, next) {
     const { gameId } = req.body;
     const { game } = res.locals;
     try {
-        const rentals = await db.query(`SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" IS NULL`, [gameId]);
+        const rentalsGameTotal = await db.query(`SELECT * FROM rentals WHERE "gameId"=$1`, [gameId]);
+        const rentalsGameNull = await db.query(`SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" IS NOT NULL`, [gameId]);
         console.log('aqui');
         console.log(game);
-        console.log(rentals.rows);
-        if (rentals.rows.length >= game.stockTotal) return res.status(400).send('Jogo indisponível');
+        console.log(rentalsGameTotal.rows.length);
+        console.log(rentalsGameNull.rows.length);
+
+        if (rentalsGameTotal.rows.length - rentalsGameNull.rows.length >= game.stockTotal) return res.status(400).send('Jogo indisponível');
 
     } catch (error) {
         res.status(500).send(error.message);

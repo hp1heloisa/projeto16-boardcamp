@@ -6,5 +6,6 @@ const rentalsRouter = Router();
 
 rentalsRouter.get('/rentals', getRentals);
 rentalsRouter.post('/rentals',validateClient, validateGame, validateDisponibility, postRental);
+rentalsRouter.post('/rentals/:id/return')
 
 export default rentalsRouter;
