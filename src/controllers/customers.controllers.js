@@ -1,8 +1,18 @@
 import { db } from "../database/database.connection.js";
 
 export async function getCustomers(req, res) {
+    const { order, desc } = req.query; 
     try {
-        const customers = await db.query('SELECT * FROM customers');
+        let customers;
+        if (order) {
+            if (desc){
+                customers = await db.query(`SELECT * FROM customers ORDER BY ${order} DESC;`);
+            } else{
+                customers = await db.query(`SELECT * FROM customers ORDER BY ${order} ASC;`);
+            }
+        } else {
+            customers = await db.query('SELECT * FROM customers');
+        }
         customers.rows.forEach(customer => {
             const birthday = new Date(customer.birthday);
             customer.birthday = `${birthday.getFullYear()}-${String(birthday.getMonth() + 1).padStart(2, '0')}-${String(birthday.getDate()).padStart(2, '0')}`

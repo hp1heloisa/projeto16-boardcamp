@@ -1,12 +1,33 @@
 import { db } from "../database/database.connection.js";
 
 export async function getRentals(req,res) {
+    const { order, desc } = req.query; 
     try {
-        const rentals = await db.query(`
-            SELECT rentals.*, customers.name as customer, 
-            games.name as game FROM rentals JOIN customers ON 
-            rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id;
-        `);
+        let rentals;
+        if (order) {
+            if (desc){
+                rentals = await db.query(`
+                    SELECT rentals.*, customers.name as customer, 
+                    games.name as game FROM rentals JOIN customers ON 
+                    rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id 
+                    ORDER BY ${order} DESC;
+                `);
+            } else{
+                rentals = await db.query(`
+                    SELECT rentals.*, customers.name as customer, 
+                    games.name as game FROM rentals JOIN customers ON 
+                    rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id 
+                    ORDER BY ${order} ASC;
+                `);
+            }
+        } else {
+            rentals = await db.query(`
+                SELECT rentals.*, customers.name as customer, 
+                games.name as game FROM rentals JOIN customers ON 
+                rentals."customerId" = customers.id JOIN games ON rentals."gameId"=games.id;
+            `);
+        }
+        
         rentals.rows.forEach(rental => {
             const rentDate = new Date(rental.rentDate);
             rental.rentDate = `${rentDate.getFullYear()}-${String(rentDate.getMonth() + 1).padStart(2, '0')}-${String(rentDate.getDate()).padStart(2, '0')}`

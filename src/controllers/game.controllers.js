@@ -2,8 +2,16 @@ import { db } from "../database/database.connection.js";
 
 export async function getGames(req, res) {
     const { order, desc } = req.query; 
-    console.log(req.query);
     try {
+        if (order) {
+            if (desc){
+                const games = await db.query(`SELECT * FROM games ORDER BY ${order} DESC;`);
+                return res.send(games.rows);
+            } else{
+                const games = await db.query(`SELECT * FROM games ORDER BY ${order} ASC;`);
+                return res.send(games.rows);
+            }
+        }
         const games = await db.query('SELECT * FROM games');
         res.send(games.rows);
     } catch (error) {
