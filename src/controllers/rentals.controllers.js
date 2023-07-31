@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
 export async function getRentals(req,res) {
-    const { order, desc, customerId, gameId, offset, limit } = req.query; 
+    const { order, desc, customerId, gameId, offset, limit, status, startDate } = req.query; 
     try {
         let requisicao = `
             SELECT rentals.*, customers.name as customer, 
@@ -13,6 +13,17 @@ export async function getRentals(req,res) {
         }
         if (gameId) {
             requisicao += ` WHERE "gameId"=${gameId}`;
+        }
+        if (status){
+            if (status  == 'open'){
+                requisicao += `WHERE "returnDate" IS NULL`;
+            } else if (status == 'closed') {
+                requisicao += `WHERE "returnDate" IS NOT NULL`;
+            }
+        } 
+        if (startDate){
+            let data = new Date(startDate);
+            requisicao += `WHERE "rentDate"='${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}'`;
         }
         if (order) {
             if (desc){
@@ -27,6 +38,7 @@ export async function getRentals(req,res) {
         if (limit) {
             requisicao += ` LIMIT ${limit}`;
         }
+        console.log(requisicao)
         const rentals = await db.query(requisicao);
         rentals.rows.forEach(rental => {
             const rentDate = new Date(rental.rentDate);
