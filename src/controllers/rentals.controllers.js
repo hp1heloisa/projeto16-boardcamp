@@ -19,12 +19,8 @@ export async function getRentals(req,res) {
 
 export async function postRental(req, res){
     const { customerId, gameId, daysRented } = req.body;
-
     if (daysRented <= 0) return res.sendStatus(400);
-
     try {
-                
-
         const game = await db.query(`SELECT * FROM games WHERE id=$1`, [gameId]);
         const rentDate = new Date();
         const originalPrice = daysRented*game.rows[0].pricePerDay;

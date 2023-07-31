@@ -18,6 +18,23 @@ export async function validateGame(req, res, next){
         const gameOk = await db.query(`SELECT * FROM games WHERE id=$1`, [gameId]);
         console.log(gameOk.rows)
         if (gameOk.rows.length < 1) return res.sendStatus(400);
+        res.locals.game = gameOk.rows[0];
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+    next();
+}
+
+export async function validateDisponibility(req, res, next) {
+    const { gameId } = req.body;
+    const { game } = res.locals;
+    try {
+        const rentals = await db.query(`SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" IS NULL`, [gameId]);
+        console.log('aqui');
+        console.log(game);
+        console.log(rentals.rows);
+        if (rentals.rows.length >= game.stockTotal) return res.status(400).send('Jogo indisponível');
+
     } catch (error) {
         res.status(500).send(error.message);
     }
